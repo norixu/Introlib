@@ -1,5 +1,3 @@
-IntroLib.Version = "1.0"
-
 local IntroLib = {}
 
 -- tween service
