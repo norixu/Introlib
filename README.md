@@ -12,9 +12,9 @@
 
 # Install:
 
-local Intro = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOURNAME/IntroLib/main/src/IntroLib.lua"))()
+local Intro = loadstring(game:HttpGet("https://raw.githubusercontent.com/norixu/Introlib/refs/heads/main/IntroLib.lua"))()
 
 Intro:Play({
-Logo = "rbxassetid://ID000000", -- replace with your asset id/texture id
+Logo = "rbxassetid://YOUR_ICON", -- replace with your asset id/texture id
 Title = "Loading Example..."
 })
