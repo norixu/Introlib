@@ -1,5 +1,7 @@
 # IntroLib
 
+# inspired by @611v on discord go send him a kiss
+
 Simple and customizable intro UI library for Roblox.
 
 Designed for clean intros for any scripts with logo support, animations, progress bar, and full visual control.
