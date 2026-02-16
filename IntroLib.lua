@@ -9,87 +9,30 @@ function IntroLib:Play(Config)
 
 Config = Config or {}
 
-local TitleText = Config.Title or "hello"
-local CreditText = Config.Credit or ""
-local SubtitleText = Config.Subtitle or ""
-
-local Duration = Config.Duration or 5
-local FadeTime = Config.FadeTime or 1
-
-local ClickToSkip = Config.ClickToSkip ~= false
-local SkipKey = Config.SkipKey or Enum.KeyCode.Space
-
-local BackgroundColor = Config.BackgroundColor or Color3.new(0,0,0)
-
-local TitleColor = Config.TitleColor or Color3.new(1,1,1)
-local CreditColor = Config.CreditColor or Color3.fromRGB(200,200,200)
-local SubtitleColor = Config.SubtitleColor or Color3.fromRGB(180,180,180)
-
-local TitleFont = Config.TitleFont or Enum.Font.GothamBold
-local CreditFont = Config.CreditFont or Enum.Font.Gotham
-local SubtitleFont = Config.SubtitleFont or Enum.Font.Gotham
-
-local SnowEnabled = Config.Snow ~= false
-local SnowAmount = Config.SnowAmount or 60
-local SnowSpeed = Config.SnowSpeed or {8,15}
-
-local BlurEnabled = Config.Blur or false
-local BlurSize = Config.BlurSize or 24
-
-local GradientEnabled = Config.Gradient or false
-
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
+local FadeTime = Config.FadeTime or 1
+local Duration = Config.Duration
+
 local Closed = false
 
-local function Close()
-
-if Closed then return end
-Closed = true
-
-TweenService:Create(BG,TweenInfo.new(FadeTime),{BackgroundTransparency = 1}):Play()
-TweenService:Create(Title,TweenInfo.new(FadeTime),{TextTransparency = 1}):Play()
-TweenService:Create(Credit,TweenInfo.new(FadeTime),{TextTransparency = 1}):Play()
-TweenService:Create(Subtitle,TweenInfo.new(FadeTime),{TextTransparency = 1}):Play()
-
-if Blur then
-TweenService:Create(Blur,TweenInfo.new(FadeTime),{Size = 0}):Play()
-end
-
-task.wait(FadeTime)
-
-if Blur then
-Blur:Destroy()
-end
-
-Gui:Destroy()
-
-end
-
 local Gui = Instance.new("ScreenGui")
+Gui.Name = "IntroLib"
 Gui.IgnoreGuiInset = true
 Gui.ResetOnSpawn = false
 Gui.Parent = PlayerGui
 
-BG = Instance.new("Frame")
-BG.Size = UDim2.new(1,0,1,0)
-BG.BackgroundColor3 = BackgroundColor
-BG.Parent = Gui
+local Background = Instance.new("Frame")
+Background.Name = "Background"
+Background.Size = UDim2.fromScale(1,1)
+Background.BackgroundColor3 = Config.BackgroundColor or Color3.new(0,0,0)
+Background.BackgroundTransparency = Config.BackgroundTransparency or 0
+Background.Parent = Gui
 
-if GradientEnabled then
+local Blur
 
-local Grad = Instance.new("UIGradient")
-Grad.Color = ColorSequence.new{
-ColorSequenceKeypoint.new(0, BackgroundColor),
-ColorSequenceKeypoint.new(1, BackgroundColor:Lerp(Color3.new(1,1,1),0.1))
-}
-Grad.Rotation = 90
-Grad.Parent = BG
-
-end
-
-if BlurEnabled then
+if Config.Blur then
 
 Blur = Instance.new("BlurEffect")
 Blur.Size = 0
@@ -98,53 +41,95 @@ Blur.Parent = Lighting
 TweenService:Create(
 Blur,
 TweenInfo.new(FadeTime),
-{Size = BlurSize}
-):Play()
-
-end
-
-local SnowFolder = Instance.new("Folder")
-SnowFolder.Parent = BG
-
-if SnowEnabled then
-
-for i=1,SnowAmount do
-
-local Snow = Instance.new("ImageLabel")
-
-Snow.Image = "rbxassetid://94938365473619"
-Snow.BackgroundTransparency = 1
-
-local Size = math.random(5,15)
-
-Snow.Size = UDim2.new(0,Size,0,Size)
-
-Snow.ImageTransparency = math.random(20,60)/100
-
-Snow.Parent = SnowFolder
-
-task.spawn(function()
-
-while Snow.Parent and not Closed do
-
-Snow.Position = UDim2.new(math.random(),0,-0.1,0)
-
-local Speed = math.random(SnowSpeed[1],SnowSpeed[2])
-
-TweenService:Create(
-Snow,
-TweenInfo.new(Speed,Enum.EasingStyle.Linear),
 {
-Position = UDim2.new(
-Snow.Position.X.Scale,
-0,
-1.1,
-0
-)
+Size = Config.BlurSize or 24
 }
 ):Play()
 
-task.wait(Speed)
+end
+
+local Logo
+
+if Config.Logo then
+
+Logo = Instance.new("ImageLabel")
+Logo.Name = "Logo"
+Logo.Image = Config.Logo
+Logo.AnchorPoint = Vector2.new(.5,.5)
+Logo.Position = Config.LogoPosition or UDim2.fromScale(.5,.35)
+Logo.Size = Config.LogoSize or UDim2.fromOffset(140,140)
+Logo.BackgroundTransparency = 1
+Logo.ImageTransparency = Config.LogoTransparency or 1
+Logo.Parent = Background
+
+if Config.LogoCornerRadius then
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0,Config.LogoCornerRadius)
+Corner.Parent = Logo
+
+end
+
+if Config.LogoStroke then
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Config.LogoStroke
+Stroke.Thickness = Config.LogoStrokeThickness or 2
+Stroke.Parent = Logo
+
+end
+
+TweenService:Create(
+Logo,
+TweenInfo.new(FadeTime),
+{
+ImageTransparency = 0
+}
+):Play()
+
+if Config.LogoAnimation == "Spin" then
+
+task.spawn(function()
+
+while not Closed do
+
+Logo.Rotation += Config.LogoSpinSpeed or 1
+
+task.wait()
+
+end
+
+end)
+
+end
+
+if Config.LogoAnimation == "Pulse" then
+
+local BaseSize = Logo.Size
+
+task.spawn(function()
+
+while not Closed do
+
+TweenService:Create(
+Logo,
+TweenInfo.new(.8),
+{
+Size = BaseSize + UDim2.fromOffset(10,10)
+}
+):Play()
+
+task.wait(.8)
+
+TweenService:Create(
+Logo,
+TweenInfo.new(.8),
+{
+Size = BaseSize
+}
+):Play()
+
+task.wait(.8)
 
 end
 
@@ -154,79 +139,176 @@ end
 
 end
 
-Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1,0,0,60)
-Title.Position = UDim2.new(0,0,0.5,-60)
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.AnchorPoint = Vector2.new(.5,.5)
+Title.Position = UDim2.fromScale(.5,.55)
+Title.Size = UDim2.fromScale(1,0)
 Title.BackgroundTransparency = 1
-Title.Font = TitleFont
-Title.Text = TitleText
-Title.TextSize = 36
-Title.TextColor3 = TitleColor
+Title.Font = Config.TitleFont or Enum.Font.GothamBold
+Title.Text = Config.Title or ""
+Title.TextSize = Config.TitleSize or 40
+Title.TextColor3 = Config.TitleColor or Color3.new(1,1,1)
 Title.TextTransparency = 1
-Title.Parent = BG
+Title.Parent = Background
 
-Subtitle = Instance.new("TextLabel")
-Subtitle.Size = UDim2.new(1,0,0,40)
-Subtitle.Position = UDim2.new(0,0,0.5,0)
-Subtitle.BackgroundTransparency = 1
-Subtitle.Font = SubtitleFont
-Subtitle.Text = SubtitleText
-Subtitle.TextSize = 22
-Subtitle.TextColor3 = SubtitleColor
-Subtitle.TextTransparency = 1
-Subtitle.Parent = BG
+TweenService:Create(
+Title,
+TweenInfo.new(FadeTime),
+{
+TextTransparency = 0
+}
+):Play()
 
-Credit = Instance.new("TextLabel")
-Credit.Size = UDim2.new(1,0,0,30)
-Credit.Position = UDim2.new(0,0,1,-40)
-Credit.BackgroundTransparency = 1
-Credit.Font = CreditFont
-Credit.Text = CreditText
-Credit.TextSize = 16
-Credit.TextColor3 = CreditColor
-Credit.TextTransparency = 1
-Credit.Parent = BG
+local Continue = Instance.new("TextLabel")
+Continue.Name = "Continue"
+Continue.AnchorPoint = Vector2.new(.5,.5)
+Continue.Position = UDim2.fromScale(.5,.9)
+Continue.Size = UDim2.fromScale(1,0)
+Continue.BackgroundTransparency = 1
+Continue.Font = Config.ContinueFont or Enum.Font.Gotham
+Continue.Text = Config.ContinueText or ""
+Continue.TextSize = Config.ContinueSize or 18
+Continue.TextColor3 = Config.ContinueColor or Color3.fromRGB(200,200,200)
+Continue.TextTransparency = 1
+Continue.Parent = Background
 
-TweenService:Create(Title,TweenInfo.new(FadeTime),{TextTransparency=0}):Play()
-TweenService:Create(Subtitle,TweenInfo.new(FadeTime),{TextTransparency=0}):Play()
-TweenService:Create(Credit,TweenInfo.new(FadeTime),{TextTransparency=0}):Play()
+TweenService:Create(
+Continue,
+TweenInfo.new(FadeTime),
+{
+TextTransparency = 0
+}
+):Play()
 
-if ClickToSkip then
+local ProgressBar
 
-BG.InputBegan:Connect(function(input)
-if input.UserInputType == Enum.UserInputType.MouseButton1 then
+if Config.ProgressBar then
+
+local Holder = Instance.new("Frame")
+Holder.Name = "ProgressHolder"
+Holder.AnchorPoint = Vector2.new(.5,.5)
+Holder.Position = Config.ProgressPosition or UDim2.fromScale(.5,.75)
+Holder.Size = Config.ProgressSize or UDim2.fromOffset(320,4)
+Holder.BackgroundColor3 = Config.ProgressBackground or Color3.fromRGB(50,50,50)
+Holder.BorderSizePixel = 0
+Holder.Parent = Background
+
+local Corner = Instance.new("UICorner")
+Corner.Parent = Holder
+
+ProgressBar = Instance.new("Frame")
+ProgressBar.Name = "Progress"
+ProgressBar.Size = UDim2.fromScale(0,1)
+ProgressBar.BackgroundColor3 = Config.ProgressColor or Color3.new(1,1,1)
+ProgressBar.BorderSizePixel = 0
+ProgressBar.Parent = Holder
+
+local Corner2 = Instance.new("UICorner")
+Corner2.Parent = ProgressBar
+
+TweenService:Create(
+ProgressBar,
+TweenInfo.new(Config.ProgressTime or 3),
+{
+Size = UDim2.fromScale(1,1)
+}
+):Play()
+
+end
+
+local function Close()
+
+if Closed then return end
+Closed = true
+
+TweenService:Create(
+Background,
+TweenInfo.new(FadeTime),
+{
+BackgroundTransparency = 1
+}
+):Play()
+
+if Logo then
+
+TweenService:Create(
+Logo,
+TweenInfo.new(FadeTime),
+{
+ImageTransparency = 1
+}
+):Play()
+
+end
+
+TweenService:Create(
+Title,
+TweenInfo.new(FadeTime),
+{
+TextTransparency = 1
+}
+):Play()
+
+TweenService:Create(
+Continue,
+TweenInfo.new(FadeTime),
+{
+TextTransparency = 1
+}
+):Play()
+
+if Blur then
+
+TweenService:Create(
+Blur,
+TweenInfo.new(FadeTime),
+{
+Size = 0
+}
+):Play()
+
+end
+
+task.wait(FadeTime)
+
+Gui:Destroy()
+
+if Blur then
+Blur:Destroy()
+end
+
+end
+
+if Config.ClickToSkip ~= false then
+
+Background.InputBegan:Connect(function(Input)
+
+if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 Close()
 end
+
 end)
 
 end
 
-UIS.InputBegan:Connect(function(input,gp)
+UIS.InputBegan:Connect(function(Input,GameProcessed)
 
-if gp then return end
+if GameProcessed then return end
 
-if input.KeyCode == SkipKey then
-
+if Input.KeyCode == (Config.SkipKey or Enum.KeyCode.Space) then
 Close()
-
 end
 
 end)
 
 if Duration then
-
-task.delay(Duration,function()
-
-Close()
-
-end)
-
+task.delay(Duration,Close)
 end
 
 return {
 
 Skip = Close,
-
 Destroy = Close
 
 }
