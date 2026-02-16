@@ -54,7 +54,7 @@ Bottom.Position = UDim2.new(0,0,1,0)
 Bottom.AnchorPoint = Vector2.new(0,1)
 Bottom.Parent = BG
 
--- logo
+-- icon
 local Logo = Instance.new("ImageLabel")
 Logo.Size = UDim2.new(0,200,0,200)
 Logo.Position = UDim2.new(0.5,0,0.5,0)
@@ -120,21 +120,21 @@ TweenInfo.new(1),
 
 task.wait(.5)
 
--- logo fade
+-- icon fade
 TweenService:Create(
 Logo,
 TweenInfo.new(1),
 {ImageTransparency = 0}
 ):Play()
 
--- logo zoom
+-- icon zoom
 TweenService:Create(
 Logo,
 TweenInfo.new(2,Enum.EasingStyle.Quint),
 {Size = UDim2.new(0,260,0,260)}
 ):Play()
 
--- logo spin
+-- icon spin
 TweenService:Create(
 Logo,
 TweenInfo.new(3,Enum.EasingStyle.Quint),
