@@ -1,10 +1,10 @@
-local Intro = loadstring(game:HttpGet("YOUR_RAW_LINK"))()
+local Intro = loadstring(game:HttpGet("https://raw.githubusercontent.com/norixu/Introlib/refs/heads/main/IntroLib.lua"))()
 
 Intro:Play({
 
-Logo = "rbxassetid://YOUR_LOGO",
+Logo = "rbxassetid://YOUR_ICON",
 
-Title = "My Game",
+Title = "Loading Hub...",
 
 ContinueText = "CLICK"
 
