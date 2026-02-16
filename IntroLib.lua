@@ -230,4 +230,14 @@ end)
 
 end
 
+function IntroLib:Skip()
+
+if game.Players.LocalPlayer.PlayerGui:FindFirstChild("IntroLib") then
+
+game.Players.LocalPlayer.PlayerGui.IntroLib:Destroy()
+
+end
+
+end
+
 return IntroLib
