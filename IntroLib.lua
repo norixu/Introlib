@@ -34,7 +34,7 @@ for i = 1,60 do
 
 local Snow = Instance.new("ImageLabel")
 
-Snow.Image = "rbxassetid://240064847"
+Snow.Image = "rbxassetid://94938365473619"
 
 local Size = math.random(5,15)
 
