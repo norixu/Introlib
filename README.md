@@ -1,8 +1,8 @@
 # IntroLib
 
-A Roblox Intro UI Library
+# A Roblox Intro UI Library
 
-Features:
+# Features:
 
 - Fade animation
 - Icon animation
@@ -10,7 +10,7 @@ Features:
 - Cinematic bars
 - Easy setup
 
-Install:
+# Install:
 
 local Intro = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOURNAME/IntroLib/main/src/IntroLib.lua"))()
 
