@@ -1,4 +1,4 @@
-local Intro = loadstring(game:HttpGet("https://raw.githubusercontent.com/norixu/Introlib/refs/heads/main/IntroLib.lua"))()
+local Intro = loadstring(game:HttpGet("https://raw.githubusercontent.com/ofugii/Introlib/refs/heads/main/IntroLib.lua"))()
 
 Intro:Play({
 
